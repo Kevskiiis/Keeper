@@ -1,6 +1,5 @@
 # Enviromental Variables:
 .env
-
 # Logs
 logs
 *.log
