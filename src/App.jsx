@@ -16,14 +16,18 @@ function App() {
     }); 
   }
 
+  function deleteNote (ID) {
+    setNotes (notes.filter((note, index) => index !== ID));
+  }
+
   return (
     <>
       <Header/>
       <CreateArea addNote={addNote}/>
       {notes.map((note, index) => {
-        return <Note key={index} title={note.title} content={note.content }/>
-      })};
-      <Note key={1} title="Note title" content="Note content"/>
+        return <Note key={index} id={index} title={note.title} content={note.content} deleteNote={deleteNote}/>
+      })}
+      {/* <Note key={1} title="Note title" content="Note content"/> */}
       <Footer/>
     </>
   )
