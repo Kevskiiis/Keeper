@@ -21,11 +21,11 @@ function CreateArea(props) {
   }
 
   return (
-    <div>
+    <div className='create-area'>
       <form onSubmit={handleSubmit}>
         <input name="title" placeholder="Title" onChange={handleChange} value={note.title} />
         <textarea name="content" placeholder="Take a note..." rows="3" onChange={handleChange} value={note.content}/>
-        <button onClick={() => {props.addNote(note)}}>Add</button>
+        <button onClick={(event) => {props.addNote(note)}}>Add</button>
       </form>
     </div>
   );

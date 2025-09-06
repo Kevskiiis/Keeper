@@ -1,35 +1,31 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/App.css';
 
-//Components:
-import Header from './components/Header.jsx';
-import Footer from './components/Footer.jsx';
-import CreateArea from './components/CreateArea.jsx';
-import Note from './components/Note.jsx';
+// Modules:
+import axios from 'axios';
 
-function App() {
-  const [notes, setNotes] = useState([]); 
+// Authentication:
+import { AuthProvider } from './authentication/AuthContext.jsx';
 
-  function addNote (note) {
-    setNotes ((prevValue) => {
-      return [...prevValue, note]
-    }); 
-  }
+// Pages:
+import HomePage from './pages/HomePage.jsx';
+import AuthPage from './pages/AuthPage.jsx';
+import AccountPage from './pages/AccountPage.jsx';
 
-  function deleteNote (ID) {
-    setNotes (notes.filter((note, index) => index !== ID));
-  }
-
+function App () {
   return (
     <>
-      <Header/>
-      <CreateArea addNote={addNote}/>
-      {notes.map((note, index) => {
-        return <Note key={index} id={index} title={note.title} content={note.content} deleteNote={deleteNote}/>
-      })}
-      {/* <Note key={1} title="Note title" content="Note content"/> */}
-      <Footer/>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/sign-in" element={<AuthPage />} />
+            <Route path="/user/account" element={<AccountPage/>} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </>
-  )
+  );
 }
-export default App
+export default App; 

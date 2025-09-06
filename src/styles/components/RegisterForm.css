@@ -1,0 +1,22 @@
+/* RegisterForm.css */
+.login-form-container {
+  width: 100%; /* Takes full width of parent */
+  max-width: 400px; /* But doesn't get too wide */
+  min-height: 300px; /* Minimum height */
+  height: auto; /* Grows with content */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form-container input,
+.login-form-container button {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
