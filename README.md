@@ -114,22 +114,27 @@ A modern note-keeping web application built with React, Express, and PostgreSQL.
 
 #### 1. Home Page (Not Signed In)
 When you first open Keeper, you'll see the home page. At the top, there's a bar with a login button. You won't be able to create notes until you sign in. If you try to create a note, the app will kindly remind you to log in or create an account.
+
 ![Home Page Screenshot](src/assets/projectImages/Home_UI.jpeg)
 
 #### 2. Login Page
 This is where you enter your email and password to access your account. It's simple and secure.
+
 ![Home Page Screenshot](src/assets/projectImages/Login_Register_UI.jpeg)
 
 #### 3. Register Page
 Here you can sign up for a new account by entering your details. The app helps you out—if you accidentally enter something that doesn't make sense (like numbers in your name), you'll get a friendly message asking you to fix it.
+
 ![Home Page Screenshot](src/assets/projectImages/Register_UI.jpeg)
 
 #### 4. Home Page (After Logging In)
 Once you're logged in or registered, the top bar changes to welcome you back and gives you access to manage your account settings. You can now create and manage your notes easily.
+
 ![Home Page Screenshot](src/assets/projectImages/Home_Registered_UI.jpeg)
 
 #### 5. Account Page
 On the account page, you'll see your user information: ID, email, first name, middle name, and last name. You can also change your password—just click the button and a form will appear. There's also a button to delete all your notes if you ever want a fresh start.
+
 ![Home Page Screenshot](src/assets/projectImages/Account_Button_UI.jpeg)
 
 ## Troubleshooting
