@@ -40,7 +40,7 @@ A modern note-keeping web application built with React, Express, and PostgreSQL.
 
 1. **Clone the repository**
    ```sh
-   git clone <your-repo-link>
+   git clone https://github.com/Kevskiiis/Keeper.git
    cd keeper
    ```
 
