@@ -133,7 +133,9 @@ Once you're logged in or registered, the top bar changes to welcome you back and
 ![Home Page Screenshot](src/assets/projectImages/Home_Registered_UI.jpeg)
 
 #### 5. Account Page
-On the account page, you'll see your user information: ID, email, first name, middle name, and last name. You can also change your password—just click the button and a form will appear. There's also a button to delete all your notes if you ever want a fresh start.
+On the account page, you'll see your user information: ID, email, first name, middle name, and last name. You can also change your password—just click the button and a form will appear. There's also a button to delete all your notes if you ever want a fresh start. 
+
+##### Note: Error is shown because I had not connected a database in this image. I hardcoded the authentication in order to show the account page without having to sign in.
 
 ![Home Page Screenshot](src/assets/projectImages/Account_Button_UI.jpeg)
 
