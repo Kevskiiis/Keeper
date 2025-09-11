@@ -14,7 +14,7 @@ import { useAuth } from '../authentication/AuthContext.jsx';
 //Components:
 import LoginForm from '../components/LoginForm.jsx';
 import RegisterForm from '../components/RegisterForm.jsx';
-import ResetPassForm from '../components/ResetPassForm.jsx';
+// import ResetPassForm from '../components/ResetPassForm.jsx';
 import ErrorBox from '../components/ErrorBox.jsx';
 
 function AuthPage () {
@@ -112,7 +112,6 @@ function AuthPage () {
                     {authMode === 'login' && (
                         <>
                             <button onClick={() => {setAuthMode('register')}}>Register</button>
-                            <button onClick={() => {setAuthMode('reset')}}>Reset Password</button>
                         </>
                     )}
                 </div>

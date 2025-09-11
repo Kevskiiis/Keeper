@@ -16,7 +16,7 @@ const saltRounds = 10;
 
 // Middleware:
 app.use(cors({
-    origin: 'http://localhost:5173', // Your React/frontend port
+    origin: process.env.ReactPort, // Your React/frontend port
     credentials: true // Important for sessions/cookies
 })); 
 app.use(bodyParser.urlencoded());
@@ -47,36 +47,43 @@ const db = new pg.Pool({
 
 // Route Calls:
 app.post ('/api/add-note', async (req, res) => {
-    const {title, content} = req.body;
-    if (req.isAuthenticated()) {
+    try {
+        const {title, content} = req.body;
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
+        }
         const userID = req.user.id;
         const timestamp = new Date().toISOString().replace('T', ' ').replace('Z', '');
-        const result = db.query('INSERT INTO notes (user_id, title, content, created_at) VALUES ($1, $2, $3, $4)', [userID, title, content, timestamp]);
-    }
-    else {
-        res.json({error: true, message: 'The server was unable to connect to the database.'});
+        await db.query('INSERT INTO notes (user_id, title, content, created_at) VALUES ($1, $2, $3, $4)', [userID, title, content, timestamp]);
+        res.json({success: true});
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to add note.'});
     }
 });
 
 app.delete ('/api/delete-note', (req, res) => {
-    const {id} = req.body;
-    if (req.isAuthenticated()) {
-        const result = db.query('DELETE FROM notes WHERE id = $1', [id]);
-    }
-    else {
-        res.json({error: true, message: 'The server was unable to connect to the database.'});  
+    try {
+        const {id} = req.body;
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
+        }
+        db.query('DELETE FROM notes WHERE id = $1', [id]);
+        res.json({success: true});
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to delete note.'});
     }
 });
 
 app.post ('/api/load-notes', async (req, res) => {
-    if (req.isAuthenticated()) {
+    try {
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
+        }
         const userID = req.user.id;
-        console.log('User ID:' + userID);
         const result = await db.query('SELECT * FROM notes WHERE user_id = $1', [userID]);
         res.json(result.rows);
-    }
-    else {
-        res.json({error: true, message: 'The server was unable to connect to the database.'});
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to load notes.'});
     }
 });
 
@@ -143,21 +150,64 @@ app.post('/api/register', async (req, res) => {
 });
 
 app.get('/api/login/status', (req, res) => {
-//   console.log('Session:', req.session);
-//   console.log('User:', req.user);
   res.json({ isAuthenticated: req.isAuthenticated() });
 });
 
 app.delete('/api/delete/notes', async (req, res) => {
     try {
-        if (req.isAuthenticated()) {
-            const userID = req.user.id;
-            const result = await db.query('DELETE * FROM notes WHERE user_id = $1', [userID]);
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
         }
+        const userID = req.user.id;
+        await db.query('DELETE FROM notes WHERE user_id = $1', [userID]);
+        res.json({success: true});
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to delete notes.'});
     }
-    catch (err) {
+app.get('/api/user/info', async (req, res) => {
+    try {
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
+        }
+        const userID = req.user.id;
+        const result = await db.query('SELECT id, email, first_name, middle_name, last_name FROM users WHERE id = $1', [userID]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({error: true, message: 'User not found.'});
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to fetch user info.'});
+    }
+});
 
+app.post('/api/user/update', async (req, res) => {
+    try {
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
+        }
+        const userID = req.user.id;
+        const { firstName, middleName, lastName } = req.body;
+        await db.query('UPDATE users SET first_name = $1, middle_name = $2, last_name = $3 WHERE id = $4', [firstName, middleName, lastName, userID]);
+        res.json({success: true});
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to update user info.'});
     }
+});
+
+app.post('/api/user/change-password', async (req, res) => {
+    try {
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({error: true, message: 'Not authenticated.'});
+        }
+        const userID = req.user.id;
+        const { password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        await db.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userID]);
+        res.json({success: true});
+    } catch (err) {
+        res.status(500).json({error: true, message: 'Failed to change password.'});
+    }
+});
 })
 
 // Passport Local Method:

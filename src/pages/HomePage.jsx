@@ -37,74 +37,64 @@ function Home () {
 
   async function addNote (note) {
     try {
-      // Check if user is authenticated:
-      if (isAuthenticated) {
-        // Verify the note has a title and content:
-        if (verifyNote(note)) {
-          // Reset Any Errors Present: 
-          resetErrorStatus();
-
-          // Save note to the database:
-          const result = axios.post('/api/add-note', note, {withCredentials: true});
-
-          // Data Has Changed for Refresh:
-          setDataHasChanged(true);
-        }
-        else {
-          setErrorStatus({
-            error: true,
-            message: 'The entry must contain a title and note.'
-          });
-        }
+      if (!isAuthenticated) {
+        setErrorStatus({ error: true, message: 'Sign-in or create an account to begin creating notes!' });
+        return;
       }
-      else {
-        setErrorStatus({
-          error: true,
-          message: 'Sign-in or create an account to begin creating notes!'
-        });
+      if (!verifyNote(note)) {
+        setErrorStatus({ error: true, message: 'The entry must contain a title and note.' });
+        return;
       }
-    }
-    catch (err) {
-
+      resetErrorStatus();
+      const result = await axios.post('/api/add-note', note, {withCredentials: true});
+      if (result.data && result.data.error) {
+        setErrorStatus({ error: true, message: result.data.message || 'Failed to add note.' });
+        return;
+      }
+      setDataHasChanged(true);
+    } catch (err) {
+      setErrorStatus({ error: true, message: 'Failed to add note.' });
     }
   }
 
   async function deleteNote (ID) {
     try {
-      if (isAuthenticated) {
-        const result = axios.delete('/api/delete-note', {
-          data: {id: ID},
-          withCredentials: true
-        });
-        setDataHasChanged(true);
+      if (!isAuthenticated) {
+        setErrorStatus({ error: true, message: 'Sign-in or create an account to begin creating notes!' });
+        return;
       }
-      else {
-        setErrorStatus({
-          error: true,
-          message: 'Sign-in or create an account to begin creating notes!'
-        });
+      const result = await axios.delete('/api/delete-note', {
+        data: {id: ID},
+        withCredentials: true
+      });
+      if (result.data && result.data.error) {
+        setErrorStatus({ error: true, message: result.data.message || 'Failed to delete note.' });
+        return;
       }
+      setDataHasChanged(true);
+    } catch (err) {
+      setErrorStatus({ error: true, message: 'Failed to delete note.' });
     }
-    catch (err) {
-
-    }
-
   }
 
   async function loadNotes() {
-    if (isAuthenticated && dataHasChanged) {
-      try {
-        const response = await axios.post('/api/load-notes', null, { withCredentials: true });
-
-        // Set Array of note objects:
-        setNotes(response.data);
-        setDataHasChanged(false);
-      } 
-      catch (err) {
-        console.error("Error loading notes:", err);
-      }
-    } else {
+    if (!isAuthenticated || !dataHasChanged) {
       return null;
+    }
+    try {
+      const response = await axios.post('/api/load-notes', null, { withCredentials: true });
+      if (response.data && response.data.error) {
+        setErrorStatus({ error: true, message: response.data.message || 'Failed to load notes.' });
+        setNotes([]);
+        setDataHasChanged(false);
+        return;
+      }
+      setNotes(response.data);
+      setDataHasChanged(false);
+    } catch (err) {
+      setErrorStatus({ error: true, message: 'Failed to load notes.' });
+      setNotes([]);
+      setDataHasChanged(false);
     }
   }
 
