@@ -14,7 +14,6 @@ import { useAuth } from '../authentication/AuthContext.jsx';
 //Components:
 import LoginForm from '../components/LoginForm.jsx';
 import RegisterForm from '../components/RegisterForm.jsx';
-// import ResetPassForm from '../components/ResetPassForm.jsx';
 import ErrorBox from '../components/ErrorBox.jsx';
 
 function AuthPage () {
